@@ -10,7 +10,7 @@ export module flist;
 
 /*
 |------------------------------------------|
-|_size|_sizeData|_countSection|_first|_last|
+|_sizeData|_size|_countSection|_first|_last|
 |-----------+------------------------------|
 |_isOccupied|_sectionBuff                  |
 |-----------|------------------------------|
@@ -45,8 +45,8 @@ public:
 
         file.seekg(_beginRead);
 
-        file.read(reinterpret_cast<char*>(&_size), sizeof(uint16_t));
         file.read(reinterpret_cast<char*>(&_sizeData), sizeof(uint16_t));
+        file.read(reinterpret_cast<char*>(&_size), sizeof(uint16_t));
         file.read(reinterpret_cast<char*>(&_countSection), sizeof(uint8_t));
         file.read(reinterpret_cast<char*>(&_first), sizeof(uint16_t));
         file.read(reinterpret_cast<char*>(&_last), sizeof(uint16_t));
@@ -201,7 +201,7 @@ private:
 
     auto setSize(uint16_t val) -> void {
         _size = val;
-        saveVal(_size, 0);
+        saveVal(_size, 2);
     }
 
     auto setCountSection(uint8_t val) -> void {
