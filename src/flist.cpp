@@ -1,8 +1,12 @@
+module;
+
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <cstdint>
 #include <vector>
+
+export module flist;
 
 /*
 |------------------------------------------|
@@ -30,7 +34,7 @@ struct Element {
     }
 };
 
-class flist {
+export class flist {
 public:
     flist(std::string pathFile, size_t beginRead = 0): _pathFile{pathFile}, _beginRead{beginRead} {
         std::ifstream file(_pathFile, std::ios::binary);
@@ -89,20 +93,12 @@ public:
 
     }
 
-    auto operator[] (const uint16_t index) -> Element {
-        if (index >= _size) { throw "segmentation fold"; }
-
-        Element res = getElementByAdress(_first);
-
-        for (int i = 0; i < index; i++) {
-            res = getElementByAdress(res.next);
-        }
-
-        return res;
+    auto operator[] (const uint16_t index) -> std::vector<uint8_t> {
+        return getElementByIndex(index).data;
     }
 
     auto removeAt(const uint16_t index) -> void {
-        Element el = (*this)[index];
+        Element el = getElementByIndex(index);
         setFlagDown(getSectionRowFromAdress(el.adress));
         setSize(_size - 1);
 
@@ -159,6 +155,18 @@ private:
 
     auto getSeekByAdress(uint16_t adress) {
         return (_sizeData + 4) * getSectionRowFromAdress(adress);
+    }
+
+    auto getElementByIndex(const uint16_t index) -> Element {
+        if (index >= _size) { throw "segmentation fold"; }
+
+        Element res = getElementByAdress(_first);
+
+        for (int i = 0; i < index; i++) {
+            res = getElementByAdress(res.next);
+        }
+
+        return res;
     }
 
     auto getElementByAdress(uint16_t adress) -> Element {
