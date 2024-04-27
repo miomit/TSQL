@@ -1,1 +1,1 @@
-g++ -g src/main.cpp src/table.cpp src/flist.cpp -o pr.out
+g++ src/main.cpp src/table.cpp src/flist.cpp -o pr.out
