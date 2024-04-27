@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 #include "flist.hpp"
 
 /*
@@ -41,11 +42,12 @@ public:
 	static auto create(std::string path, std::vector<TableHader> column) -> table;
     table(std::string path, std::vector<TableHader> column): 
     _path{path},
-    _column{column},
-    _list{_path, 2 + sizeof(TableHader) * _column.size()} { };
+    _column{column} {
+    	 _list = std::make_unique<flist>(path, 1 + sizeof(TableHader) * _column.size());
+    };
     
 private:
-    flist _list;
+	std::unique_ptr<flist> _list;
     std::string _path;
     std::vector<TableHader> _column;
 };
