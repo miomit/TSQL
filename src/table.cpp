@@ -6,7 +6,12 @@ auto table::open(std::string path) -> table {
     file.read(reinterpret_cast<char*>(&columnCount), sizeof(uint8_t));
 
     std::vector<TableHader> column(columnCount);
-    file.read(reinterpret_cast<char*>(column.data()), column.size());
+    TableHader buff;
+
+    for (int i = 0; i < columnCount; i++) {
+        file.read(reinterpret_cast<char*>(&buff), sizeof(TableHader));
+        column[i] = buff;
+    }
 
     file.close();
 
