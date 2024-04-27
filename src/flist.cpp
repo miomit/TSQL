@@ -1,7 +1,7 @@
 #include "flist.hpp"
 
 auto Element::print() -> void {
-    std::cout << "Adress: " << std::hex << adress << std::endl;;
+    std::cout << "Adress: " << std::hex << adress << std::endl;
     std::cout << "Data: ";
     for (int i = 0; i < data.size(); i++) std::cout << int(data[i]) << " ";
     std::cout << std::endl;
