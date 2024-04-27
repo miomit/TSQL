@@ -18,11 +18,11 @@ auto table::create(std::string path, std::vector<TableHader> column) -> table {
     uint8_t columnCount = uint8_t(column.size());
 
     file.write(reinterpret_cast<char*>(&columnCount), sizeof(uint8_t));
-    file.write(reinterpret_cast<char*>(column.data()), column.size());
 
     uint16_t sizeData{0};
     for (auto& col : column) {
         sizeData += col.size;
+        file.write(reinterpret_cast<char*>(&col), sizeof(TableHader));
     }
 
     file.write(reinterpret_cast<char*>(&sizeData), sizeof(uint16_t));
