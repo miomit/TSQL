@@ -18,11 +18,27 @@ struct TableHader
 {
     char name[50];
     Type type;
-    unsigned int size;
+    uint8_t size;
+
+    TableHader() = default;
+	TableHader(std::string str, Type t, uint8_t s): type{t}, size{s} {
+		str.copy(name, sizeof(name));
+	}
+    static auto NUM(std::string name) -> TableHader {
+    	return TableHader(name, INT, 4);
+    }
+    static auto SYMBOL(std::string name) -> TableHader {
+    	return TableHader(name, CHAR, 1);
+    }
+ 	static auto TEXT(std::string name, uint8_t size) -> TableHader {
+    	return TableHader(name, CHAR, size);
+    }
 };
 
 class table {
 public:
+	static auto open(std::string path) -> table;
+	static auto create(std::string path, std::vector<TableHader> column) -> table;
     table(std::string path, std::vector<TableHader> column): 
     _path{path},
     _column{column},
