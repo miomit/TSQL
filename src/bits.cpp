@@ -29,6 +29,12 @@ auto bytes_to_int (std::vector<uint8_t> bytes) -> int {
             | int(bytes[3]) << 24;
 }
 
+auto bytes_to_string (std::vector<uint8_t> bytes) -> std::string {
+    std::string res{};
+    for (auto& b : bytes) res += char(b);
+    return res;
+}
+
 template<typename T>
 auto bytes_to_type (std::vector<uint8_t> bytes) -> T {
     T res{0}; int c{-1};
