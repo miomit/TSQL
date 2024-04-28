@@ -66,6 +66,7 @@ public:
 		}
     };
     auto insert(std::map<std::string, std::string> cell) -> bool;
+    auto update(uint16_t row, std::map<std::string, std::string> cell) -> bool;
 private:
 	std::unique_ptr<flist> _list;
     std::string _path;

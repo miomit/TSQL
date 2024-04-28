@@ -61,3 +61,28 @@ auto table::insert(std::map<std::string, std::string> cell) -> bool {
     _list->append(data);
     return true;
 }
+
+auto table::update(uint16_t row, std::map<std::string, std::string> cell) -> bool {
+    auto data = (*_list)[row];
+    for (auto& el : cell) {
+        bool isFind = false;
+        for (auto i = 0; i < _column.size(); i++) {
+            if (el.first == _column[i].name) {
+                isFind = true;
+                std::vector<uint8_t> buff;
+                if (_column[i].type == INT) {
+                    buff = int_to_bits(std::stoi(el.second));
+                } else {
+                    buff = string_to_bits(el.second, _column[i].size);
+                }
+                for (auto j = 0; j < buff.size(); j++) {
+                    data[j + _seekData[i]] = buff[j];
+                }
+                break;
+            }
+        }
+        if (!isFind) return false;
+    }
+    _list->updateAt(row, data);
+    return true;
+}
