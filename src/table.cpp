@@ -36,3 +36,28 @@ auto table::create(std::string path, std::vector<TableHader> column) -> table {
 
     return table(path, column);
 }
+
+auto table::insert(std::map<std::string, std::string> cell) -> bool {
+    auto data = std::vector<uint8_t>(_list->getSizeData(), 0);
+    for (auto& el : cell) {
+        bool isFind = false;
+        for (auto i = 0; i < _column.size(); i++) {
+            if (el.first == _column[i].name) {
+                isFind = true;
+                std::vector<uint8_t> buff;
+                if (_column[i].type == INT) {
+                    buff = int_to_bits(std::stoi(el.second));
+                } else {
+                    buff = string_to_bits(el.second, _column[i].size);
+                }
+                for (auto j = 0; j < buff.size(); j++) {
+                    data[j + _seekData[i]] = buff[j];
+                }
+                break;
+            }
+        }
+        if (!isFind) return false;
+    }
+    _list->append(data);
+    return true;
+}

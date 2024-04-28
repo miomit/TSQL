@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <map>
+#include "bits.hpp"
 #include "flist.hpp"
 
 /*
@@ -56,13 +58,17 @@ public:
     table(std::string path, std::vector<TableHader> column): 
     _path{path},
     _column{column} {
-    	 _list = std::make_unique<flist>(path, 1 + sizeof(TableHader) * _column.size());
-
-    	 for (auto& col : _column) col.print();
+		_list = std::make_unique<flist>(path, 1 + sizeof(TableHader) * _column.size());
+		unsigned int seek{0};
+		for (auto& col : _column) {
+			_seekData.push_back(seek);
+			seek += col.size;
+		}
     };
-    
+    auto insert(std::map<std::string, std::string> cell) -> bool;
 private:
 	std::unique_ptr<flist> _list;
     std::string _path;
     std::vector<TableHader> _column;
+    std::vector<unsigned int> _seekData;
 };
