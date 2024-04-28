@@ -55,7 +55,7 @@ public:
     auto append(std::vector<uint8_t> data) -> void;
     auto operator[] (const uint16_t index) -> std::vector<uint8_t>;
     auto removeAt(const uint16_t index) -> void;
-
+	auto updateAt(const uint16_t index, std::vector<uint8_t> data) -> void;
 private:
     std::string _pathFile;
     uint16_t _first{}, _last{};

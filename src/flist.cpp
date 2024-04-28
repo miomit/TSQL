@@ -75,6 +75,13 @@ auto flist::removeAt(const uint16_t index) -> void {
     }
 }
 
+auto flist::updateAt(const uint16_t index, std::vector<uint8_t> data) -> void {
+    if (data.size() != _sizeData) throw "data.size() != _sizeData";
+    Element el = getElementByIndex(index);
+    el.data = data;
+    saveElement(el);
+}
+
 auto flist::getSectionIdFromAdress(uint16_t adress) -> uint16_t {
     return adress & uint16_t(0x3ff);
 }
