@@ -49,6 +49,8 @@ public:
         file.close();
     };
 
+	auto getSizeData() -> size_t { return _sizeData; }
+
     auto size() -> uint16_t;
     auto append(std::vector<uint8_t> data) -> void;
     auto operator[] (const uint16_t index) -> std::vector<uint8_t>;
