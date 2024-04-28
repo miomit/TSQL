@@ -21,10 +21,18 @@ auto string_to_bits(std::string str, size_t size) -> std::vector<uint8_t> {
     return res;
 }
 
+auto bytes_to_int (std::vector<uint8_t> bytes) -> int {
+    if (bytes.size() != 4) throw "bytes.size() != 4";
+    return  int(bytes[0])
+            | int(bytes[1]) << 8
+            | int(bytes[2]) << 16
+            | int(bytes[3]) << 24;
+}
+
 template<typename T>
 auto bytes_to_type (std::vector<uint8_t> bytes) -> T {
     T res{0}; int c{-1};
-    for (auto byte = bytes.rbegin(); byte != bytes.rend() && ++c < sizeof(T); ++byte) {
+    for (auto byte = bytes.begin(); byte != bytes.end() && ++c < sizeof(T); ++byte) {
         T a{*byte}; a <<= c * 8;
         res |= a;
     }
