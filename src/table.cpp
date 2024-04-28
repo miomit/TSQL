@@ -86,3 +86,7 @@ auto table::update(uint16_t row, std::map<std::string, std::string> cell) -> boo
     _list->updateAt(row, data);
     return true;
 }
+
+auto table::remove(uint16_t row) -> void {
+    _list->removeAt(row);
+}
