@@ -9,7 +9,7 @@ template<typename T>
 auto bytes_to_type (std::vector<uint8_t> bytes) -> T;
 
 template<typename T>
-auto type_to_bits(T num) -> std::vector<bool>
+auto type_to_bits(T num) -> std::vector<bool>;
 
 template<typename T>
 auto print_bits(T num) -> void;
