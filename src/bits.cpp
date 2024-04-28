@@ -4,8 +4,8 @@
 auto int_to_bits(int num) -> std::vector<uint8_t> {
     auto res = std::vector<uint8_t>(4, 0);
 
-    for (int i = 1; i <= res.size(); i++) {
-        res[res.size() - i] |= uint8_t(num >> (i-1) * 8);
+    for (int i = 0; i < res.size(); i++) {
+        res[i] |= uint8_t(num >> i * 8);
     }
 
     return res;
