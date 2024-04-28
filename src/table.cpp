@@ -90,3 +90,18 @@ auto table::update(uint16_t row, std::map<std::string, std::string> cell) -> boo
 auto table::remove(uint16_t row) -> void {
     _list->removeAt(row);
 }
+
+auto table::getIntByCell(std::string column, uint16_t row) -> int {
+    for (auto i = 0; i < _column.size(); i++) {
+        if (column == _column[i].name) {
+            if (_column[i].type != INT) throw "Cell is not int";
+            auto data = (*_list)[row];
+            auto buff = std::vector<uint8_t>(_column[i].size, 0);
+            for (auto j = 0; j < buff.size(); j++) {
+                buff[j] = data[j + _seekData[i]];
+            }
+            return bytes_to_int(buff);
+        }
+    }
+    throw "column is not exist";
+}
