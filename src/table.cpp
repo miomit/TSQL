@@ -105,3 +105,18 @@ auto table::getIntByCell(std::string column, uint16_t row) -> int {
     }
     throw "column is not exist";
 }
+
+auto table::getStringByCell(std::string column, uint16_t row) -> std::string {
+    for (auto i = 0; i < _column.size(); i++) {
+        if (column == _column[i].name) {
+            if (_column[i].type != CHAR) throw "Cell is not int";
+            auto data = (*_list)[row];
+            auto buff = std::vector<uint8_t>(_column[i].size, 0);
+            for (auto j = 0; j < buff.size(); j++) {
+                buff[j] = data[j + _seekData[i]];
+            }
+            return bytes_to_string(buff);
+        }
+    }
+    throw "column is not exist";
+}

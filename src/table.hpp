@@ -70,6 +70,7 @@ public:
     auto remove(uint16_t row) -> void;
 
     auto getIntByCell(std::string column, uint16_t row) -> int;
+    auto getStringByCell(std::string column, uint16_t row) -> std::string;
 private:
 	std::unique_ptr<flist> _list;
     std::string _path;
