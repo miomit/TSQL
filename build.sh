@@ -1,1 +1,1 @@
-g++ src/main.cpp src/table.cpp src/flist.cpp src/bits.cpp -o pr.out
+g++ src/main.cpp src/table.cpp src/flist.cpp src/bits.cpp src/lexer.cpp -o pr.out
