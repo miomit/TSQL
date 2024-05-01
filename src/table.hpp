@@ -66,13 +66,14 @@ public:
 		}
     };
     auto insert(std::map<std::string, std::string> cell) -> bool;
+    auto insert(std::vector<std::string> row) -> bool;
     auto update(uint16_t row, std::map<std::string, std::string> cell) -> bool;
     auto remove(uint16_t row) -> void;
 
     auto getIntByCell(std::string column, uint16_t row) -> int;
     auto getStringByCell(std::string column, uint16_t row) -> std::string;
 private:
-	std::unique_ptr<flist> _list;
+    std::unique_ptr<flist> _list;
     std::string _path;
     std::vector<TableHader> _column;
     std::vector<unsigned int> _seekData;

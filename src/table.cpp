@@ -62,6 +62,15 @@ auto table::insert(std::map<std::string, std::string> cell) -> bool {
     return true;
 }
 
+auto table::insert(std::vector<std::string> row) -> bool {
+    if (row.size() != _column.size()) return false;
+    std::map<std::string, std::string> cell;
+    for (auto i = 0; i < row.size(); i++) {
+        cell[_column[i].name] = row[i];
+    }
+    return insert(cell);
+}
+
 auto table::update(uint16_t row, std::map<std::string, std::string> cell) -> bool {
     auto data = (*_list)[row];
     for (auto& el : cell) {
