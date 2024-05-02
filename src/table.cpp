@@ -129,3 +129,12 @@ auto table::getStringByCell(std::string column, uint16_t row) -> std::string {
     }
     throw "column is not exist";
 }
+
+auto table::getHeaderTypeByName(std::string name) -> Type {
+    for (auto& col : _column) {
+        if (col.name == name) {
+            return col.type;
+        }
+    }
+    throw "column is not exist";
+}
