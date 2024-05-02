@@ -148,3 +148,7 @@ auto table::getHeaderNames() -> std::vector<std::string> {
 
     return res;
 }
+
+auto table::size() -> unsigned int {
+    return _list->size();
+}

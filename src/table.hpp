@@ -75,6 +75,8 @@ public:
 
     auto getHeaderTypeByName(std::string name) -> Type;
     auto getHeaderNames() -> std::vector<std::string>;
+
+    auto size() -> unsigned int;
 private:
     std::unique_ptr<flist> _list;
     std::string _path;
