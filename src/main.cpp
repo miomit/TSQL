@@ -8,30 +8,42 @@ const std::string sqlCreate = "CREATE TABLE Students (Firstname CHAR(10), Surnam
 const std::string sqlInsert = "INSERT INTO Students ( 'Yura', 'Movsesyan', 21, '+7(926) 33 80 800', 'M')";
 const std::string sqlDrop = "DROP TABLE Students";
 
+auto getCodeSQL (int id) -> std::string {
+    switch (id) {
+        case 0: return sqlCreate;
+        case 1: return sqlInsert;
+        case 2: return sqlDrop;
+    }
+}
+
 auto main() -> int {
-    
-    auto tokens = lexer(sqlDrop);
+    int c = 0;
+    std::cout << "[CREATE - 0, INSERT - 1, DROP - 2]\n" << "> ";
+
+    std::cin >> c;
+
+    auto tokens = lexer(getCodeSQL(c));
 
     // CREATE
     if (tokens[0].type == TOKEN_CREATE
         && tokens[1].type == TOKEN_TABLE
         && tokens[2].type == TOKEN_IDENTIFIER) {
             std::string tableName = tokens[2].value;
-            std::vector<TableHader> tableHeader;
+            std::vector<TableHeader> tableHeader;
             if (tokens[3].type == TOKEN_LPAREN
                 && tokens.back().type == TOKEN_RPAREN) {
                 for (auto i = 4; i < tokens.size() - 2; i++) {
                     if (tokens[i].type == TOKEN_COMMA) continue;
                     if (tokens[i].type == TOKEN_IDENTIFIER) {
                         if (tokens[i+1].type == TOKEN_INT) {
-                            tableHeader.push_back(TableHader::NUM(tokens[i].value));
+                            tableHeader.push_back(TableHeader::NUM(tokens[i].value));
                             i += 2;
                         } else if (tokens[i+1].type == TOKEN_CHAR) {
                             if (tokens[i+2].type == TOKEN_LPAREN) {
                                 if (tokens[i+3].type == TOKEN_NUM
                                     && tokens[i+4].type == TOKEN_RPAREN) {
                                     tableHeader.push_back(
-                                        TableHader::TEXT(
+                                        TableHeader::TEXT(
                                             tokens[i].value,
                                             std::stoi(tokens[i+3].value)
                                         )
@@ -40,7 +52,7 @@ auto main() -> int {
                                 }
                             } else {
                                 tableHeader.push_back(
-                                    TableHader::SYMBOL(
+                                    TableHeader::SYMBOL(
                                         tokens[i].value
                                     )
                                 );

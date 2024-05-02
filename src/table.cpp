@@ -5,11 +5,11 @@ auto table::open(std::string path) -> table {
     std::ifstream file(path, std::ios::binary);
     file.read(reinterpret_cast<char*>(&columnCount), sizeof(uint8_t));
 
-    std::vector<TableHader> column(columnCount);
-    TableHader buff;
+    std::vector<TableHeader> column(columnCount);
+    TableHeader buff;
 
     for (int i = 0; i < columnCount; i++) {
-        file.read(reinterpret_cast<char*>(&buff), sizeof(TableHader));
+        file.read(reinterpret_cast<char*>(&buff), sizeof(TableHeader));
         column[i] = buff;
     }
 
@@ -18,7 +18,7 @@ auto table::open(std::string path) -> table {
     return table(path, column);
 }
 
-auto table::create(std::string path, std::vector<TableHader> column) -> table {
+auto table::create(std::string path, std::vector<TableHeader> column) -> table {
     std::ofstream file(path, std::ios::binary);
     uint8_t columnCount = uint8_t(column.size());
 
@@ -27,7 +27,7 @@ auto table::create(std::string path, std::vector<TableHader> column) -> table {
     uint16_t sizeData{0};
     for (auto& col : column) {
         sizeData += col.size;
-        file.write(reinterpret_cast<char*>(&col), sizeof(TableHader));
+        file.write(reinterpret_cast<char*>(&col), sizeof(TableHeader));
     }
 
     file.write(reinterpret_cast<char*>(&sizeData), sizeof(uint16_t));
