@@ -74,6 +74,7 @@ public:
     auto getStringByCell(std::string column, uint16_t row) -> std::string;
 
     auto getHeaderTypeByName(std::string name) -> Type;
+    auto getHeaderNames() -> std::vector<std::string>;
 private:
     std::unique_ptr<flist> _list;
     std::string _path;

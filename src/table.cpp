@@ -138,3 +138,13 @@ auto table::getHeaderTypeByName(std::string name) -> Type {
     }
     throw "column is not exist";
 }
+
+auto table::getHeaderNames() -> std::vector<std::string> {
+    std::vector<std::string> res;
+
+    for (auto& col : _column) {
+        res.push_back(col.name);
+    }
+
+    return res;
+}
