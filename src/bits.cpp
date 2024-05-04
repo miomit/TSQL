@@ -31,7 +31,7 @@ auto bytes_to_int (std::vector<uint8_t> bytes) -> int {
 
 auto bytes_to_string (std::vector<uint8_t> bytes) -> std::string {
     std::string res{};
-    for (auto& b : bytes) res += char(b);
+    for (auto& b : bytes) if (b != 0) res += char(b);
     return res;
 }
 
