@@ -11,6 +11,7 @@ auto sqlExe(std::string cmd) -> bool {
         case TOKEN_DROP:    return drop(tokens);
         case TOKEN_SELECT:  return select(tokens);
         case TOKEN_DELETE:  return DELETE(tokens);
+        case TOKEN_UPDATE:  return UPDATE(tokens);
     }
 
     return false;
@@ -168,6 +169,38 @@ auto DELETE(std::vector<Token> tokens) -> bool {
             }
         }
     }
+}
+
+auto UPDATE(std::vector<Token> tokens) -> bool {
+    if (tokens[0].type == TOKEN_UPDATE && tokens[1].type == TOKEN_IDENTIFIER && tokens[2].type == TOKEN_SET) {
+        std::string tableName = tokens[1].value;
+
+        std::vector<Token> tokenSet;
+        std::vector<Token> tokenWhere;
+
+        int i = 3;
+        for (; i < tokens.size(); i++) {
+            if (tokens[i].type == TOKEN_WHERE) {
+                i++; break;
+            } else {
+                tokenSet.push_back(tokens[i]);
+            }
+        }
+
+        for (; i < tokens.size(); i++) tokenWhere.push_back(tokens[i]);
+
+        auto db = std::make_shared<table>(table::open(dirPath + tableName + ".tsql"));
+
+        for (auto i = 0; i < db->size(); i++) {
+            if (where(db, i, tokenWhere)) {
+                if (!SET(db, i, tokenSet)) return false;
+            }
+        }
+
+        return true;
+    }
+
+    return false;
 }
 
 auto where(std::shared_ptr<table> db, uint16_t row, std::vector<Token> tokens) -> bool {
@@ -457,6 +490,6 @@ auto SET(std::shared_ptr<table> db, uint16_t row, std::vector<Token> tokens) -> 
         }
         if (stack.size() != 0) return false;
     }
-    
+
     return db->update(row, cell);
 }

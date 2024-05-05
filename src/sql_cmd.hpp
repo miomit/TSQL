@@ -12,6 +12,7 @@ auto insert(std::vector<Token> tokens) -> bool;
 auto drop(std::vector<Token> tokens) -> bool;
 auto select(std::vector<Token> tokens) -> bool;
 auto DELETE(std::vector<Token> tokens) -> bool;
+auto UPDATE(std::vector<Token> tokens) -> bool;
 
 auto where(std::shared_ptr<table> db, uint16_t row, std::vector<Token> tokens) -> bool;
 auto SET(std::shared_ptr<table> db, uint16_t row, std::vector<Token> tokens) -> bool;
