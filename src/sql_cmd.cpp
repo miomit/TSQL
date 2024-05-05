@@ -1,4 +1,5 @@
 #include <stack>
+#include <iomanip>
 #include "sql_cmd.hpp"
 #include "parser.hpp"
 
@@ -8,6 +9,7 @@ auto sqlExe(std::string cmd) -> bool {
         case TOKEN_CREATE:  return create(tokens);
         case TOKEN_INSERT:  return insert(tokens);
         case TOKEN_DROP:    return drop(tokens);
+        case TOKEN_SELECT:  return select(tokens);
     }
 
     return false;
@@ -94,7 +96,60 @@ auto drop(std::vector<Token> tokens) -> bool {
     return false;
 }
 
+auto select(std::vector<Token> tokens) -> bool {
+    if (tokens[0].type == TOKEN_SELECT) {
+        auto i = 1;
+        bool isALL = false;
+        std::vector<std::string> headerSelect;
+        if (tokens[i].type == TOKEN_TIMES) {
+            isALL = true;
+            i++;
+        } else {
+            for (; tokens[i].type != TOKEN_FROM; i++) {
+                if (tokens[i].type == TOKEN_COMMA) continue;
+                if (tokens[i].type == TOKEN_IDENTIFIER) {
+                    headerSelect.push_back(tokens[i].value);
+                }
+            }
+        }
+
+        if (tokens[i].type == TOKEN_FROM) {
+            i++;
+            std::string tableName = tokens[i].value;
+            i++;
+            auto db = std::make_shared<table>(table::open(dirPath + tableName + ".tsql"));
+
+            if (isALL) headerSelect = db->getHeaderNames();
+            std::vector<Token> tokenWhere;
+
+            if (i < tokens.size() && tokens[i].type == TOKEN_WHERE) {
+                i++;
+                for (auto j = i; j < tokens.size(); j++) {
+                    tokenWhere.push_back(tokens[j]);
+                }
+            }
+            for (auto& colName : headerSelect)  std::cout << std::setw(20) << colName;
+            std::cout << std::endl;
+            for (auto j = 0; j < db->size(); j++) {
+                if (where(db, j, tokenWhere)) {
+                    for (auto& colName : headerSelect) {
+                        if (db->getHeaderTypeByName(colName) == INT) {
+                            std::cout << std::setw(20) << db->getIntByCell(colName, j);
+                        } else {
+                            std::cout << std::setw(20) << db->getStringByCell(colName, j);
+                        }
+                    }
+                    std::cout << std::endl; 
+                }
+            }
+        }
+
+
+    }
+}
+
 auto where(std::shared_ptr<table> db, uint16_t row, std::vector<Token> tokens) -> bool {
+    if (tokens.size() == 0) return true;
     std::vector<Token> parseToken = parse(tokens);
 
     bool flag = false;
