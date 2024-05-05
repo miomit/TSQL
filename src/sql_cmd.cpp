@@ -6,10 +6,10 @@
 auto sqlExe(std::string cmd) -> bool {
     auto tokens = lexer(cmd);
     switch (tokens[0].type) {
-        case TOKEN_CREATE:  return create(tokens);
-        case TOKEN_INSERT:  return insert(tokens);
-        case TOKEN_DROP:    return drop(tokens);
-        case TOKEN_SELECT:  return select(tokens);
+        case TOKEN_CREATE:  return CREATE(tokens);
+        case TOKEN_INSERT:  return INSERT(tokens);
+        case TOKEN_DROP:    return DROP(tokens);
+        case TOKEN_SELECT:  return SELECT(tokens);
         case TOKEN_DELETE:  return DELETE(tokens);
         case TOKEN_UPDATE:  return UPDATE(tokens);
     }
@@ -17,7 +17,7 @@ auto sqlExe(std::string cmd) -> bool {
     return false;
 }
 
-auto create(std::vector<Token> tokens) -> bool {
+auto CREATE(std::vector<Token> tokens) -> bool {
     if (tokens.size() < 6) return false;
     if (tokens[0].type == TOKEN_CREATE && tokens[1].type == TOKEN_TABLE && tokens[2].type == TOKEN_IDENTIFIER) {
         std::string tableName = tokens[2].value;
@@ -64,7 +64,7 @@ auto create(std::vector<Token> tokens) -> bool {
     return false;
 }
 
-auto insert(std::vector<Token> tokens) -> bool {
+auto INSERT(std::vector<Token> tokens) -> bool {
     if (tokens.size() < 6) return false;
     if (tokens[0].type == TOKEN_INSERT && tokens[1].type == TOKEN_INTO && tokens[2].type == TOKEN_IDENTIFIER) {
         std::string tableName = tokens[2].value;
@@ -88,7 +88,7 @@ auto insert(std::vector<Token> tokens) -> bool {
     return false; 
 }
 
-auto drop(std::vector<Token> tokens) -> bool {
+auto DROP(std::vector<Token> tokens) -> bool {
     if (tokens.size() < 3) return false;
     if (tokens[0].type == TOKEN_DROP && tokens[1].type == TOKEN_TABLE && tokens[2].type == TOKEN_IDENTIFIER) {
         std::remove((dirPath + tokens[2].value + ".tsql").c_str());
@@ -98,7 +98,7 @@ auto drop(std::vector<Token> tokens) -> bool {
     return false;
 }
 
-auto select(std::vector<Token> tokens) -> bool {
+auto SELECT(std::vector<Token> tokens) -> bool {
     if (tokens[0].type == TOKEN_SELECT) {
         auto i = 1;
         bool isALL = false;
@@ -133,7 +133,7 @@ auto select(std::vector<Token> tokens) -> bool {
             for (auto& colName : headerSelect)  std::cout << std::setw(20) << colName;
             std::cout << std::endl;
             for (auto j = 0; j < db->size(); j++) {
-                if (where(db, j, tokenWhere)) {
+                if (WHERE(db, j, tokenWhere)) {
                     for (auto& colName : headerSelect) {
                         if (db->getHeaderTypeByName(colName) == INT) {
                             std::cout << std::setw(20) << db->getIntByCell(colName, j);
@@ -192,7 +192,7 @@ auto UPDATE(std::vector<Token> tokens) -> bool {
         auto db = std::make_shared<table>(table::open(dirPath + tableName + ".tsql"));
 
         for (auto i = 0; i < db->size(); i++) {
-            if (where(db, i, tokenWhere)) {
+            if (WHERE(db, i, tokenWhere)) {
                 if (!SET(db, i, tokenSet)) return false;
             }
         }
@@ -203,7 +203,7 @@ auto UPDATE(std::vector<Token> tokens) -> bool {
     return false;
 }
 
-auto where(std::shared_ptr<table> db, uint16_t row, std::vector<Token> tokens) -> bool {
+auto WHERE(std::shared_ptr<table> db, uint16_t row, std::vector<Token> tokens) -> bool {
     if (tokens.size() == 0) return true;
     std::vector<Token> parseToken = parse(tokens);
 
