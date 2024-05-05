@@ -6,3 +6,4 @@ const std::string sqlCreate = "CREATE TABLE Students (Firstname CHAR(10), Surnam
 const std::string sqlInsert = "INSERT INTO Students ( 'Yura', 'Movsesyan', 21, '+7(926) 33 80 800', 'M')";
 const std::string sqlDrop = "DROP TABLE Students";
 const std::string sqlSelect = "SELECT (Firstname, Age) FROM Students WHERE SEX = 'F' AND Age < 30 OR Surname = 'Movsesyan'";
+const std::string sqlDelete = "DELETE FROM Students WHERE SEX = 'F'";

@@ -10,6 +10,7 @@ auto sqlExe(std::string cmd) -> bool {
         case TOKEN_INSERT:  return insert(tokens);
         case TOKEN_DROP:    return drop(tokens);
         case TOKEN_SELECT:  return select(tokens);
+        case TOKEN_DELETE:  return DELETE(tokens);
     }
 
     return false;
@@ -145,6 +146,27 @@ auto select(std::vector<Token> tokens) -> bool {
         }
 
 
+    }
+}
+
+auto DELETE(std::vector<Token> tokens) -> bool {
+    if (tokens.size() < 3) return false;
+    if (tokens[0].type == TOKEN_DELETE && tokens[1].type == TOKEN_FROM && tokens[2].type == TOKEN_IDENTIFIER) {
+        std::string tableName = tokens[2].value;
+        std::vector<Token> tokenWhere;
+        if (tokens[3].type = TOKEN_WHERE) {
+            for (auto j = 4; j < tokens.size(); j++) {
+                tokenWhere.push_back(tokens[j]);
+            }
+        }
+
+        auto db = std::make_shared<table>(table::open(dirPath + tableName + ".tsql"));
+
+        for (auto i = 0; i < db->size(); i++) {
+            if (where(db, i, tokenWhere)) {
+                db->remove(i); i--;
+            }
+        }
     }
 }
 
