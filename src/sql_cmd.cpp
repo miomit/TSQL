@@ -164,7 +164,7 @@ auto DELETE(std::vector<Token> tokens) -> bool {
         auto db = std::make_shared<table>(table::open(dirPath + tableName + ".tsql"));
 
         for (auto i = 0; i < db->size(); i++) {
-            if (where(db, i, tokenWhere)) {
+            if (WHERE(db, i, tokenWhere)) {
                 db->remove(i); i--;
             }
         }
