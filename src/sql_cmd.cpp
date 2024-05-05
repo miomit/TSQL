@@ -298,3 +298,165 @@ auto where(std::shared_ptr<table> db, uint16_t row, std::vector<Token> tokens) -
     
     return stack.top().value == "1" ? true : false;
 }
+
+auto SET(std::shared_ptr<table> db, uint16_t row, std::vector<Token> tokens) -> bool {
+    if (tokens.size() < 3) return false;
+    std::vector<std::vector<Token>> parseTokens;
+    std::vector<Token> buff;
+    for (int i = 1; i < tokens.size(); i++) {
+        if (tokens[i].type == TOKEN_COMMA || i == tokens.size() - 1){
+            parseTokens.push_back(parse(buff));
+            buff = std::vector<Token>();
+            
+        } else {
+            buff.push_back(tokens[i]);
+        }
+    }
+
+    std::map<std::string, std::string> cell;
+    for (auto i = 0; i < parseTokens.size(); i++) {
+        std::stack<Token> stack;
+        for (auto& tw : parseTokens[i]) {
+            if (tw.type == TOKEN_NUM || tw.type == TOKEN_STRING || tw.type == TOKEN_IDENTIFIER) {
+                stack.push(tw);
+            } else  if (precedence(tw) != 0) {
+                if (tw.type == TOKEN_NOT) {
+                    bool a = stack.top().value == "0";
+                    stack.pop();
+                    stack.push(Token{TOKEN_NUM, (a ? "1" : "0")});
+                } else {
+                    auto a = stack.top(); stack.pop();
+                    auto b = stack.top(); stack.pop();
+
+                    if (tw.type == TOKEN_EQ && b.type == TOKEN_IDENTIFIER) {
+                        cell[b.value] = a.value;
+                    } else if (a.type == TOKEN_NUM && a.type == b.type) {
+                        switch (tw.type) {
+                            case TOKEN_TIMES:
+                                stack.push(Token{
+                                    TOKEN_NUM,std::to_string(std::stoi(b.value) * std::stoi(a.value))
+                                });
+                            break;
+                            case TOKEN_SLASH:
+                                stack.push(Token{
+                                    TOKEN_NUM,std::to_string(std::stoi(b.value) / std::stoi(a.value))
+                                });
+                            break;
+                            case TOKEN_PLUS:
+                                stack.push(Token{
+                                    TOKEN_NUM,std::to_string(std::stoi(b.value) + std::stoi(a.value))
+                                });
+                            break;
+                            case TOKEN_MINUS:
+                                stack.push(Token{
+                                    TOKEN_NUM,std::to_string(std::stoi(b.value) - std::stoi(a.value))
+                                });
+                            break;
+                            case TOKEN_AND:
+                                stack.push(Token{
+                                    TOKEN_NUM,std::to_string(std::stoi(b.value) && std::stoi(a.value))
+                                });
+                            break;
+                            case TOKEN_OR:
+                                stack.push(Token{
+                                    TOKEN_NUM, std::to_string(std::stoi(b.value) || std::stoi(a.value))
+                                });
+                            break;
+                        }
+                    } else if (a.type == TOKEN_NUM || b.type == TOKEN_NUM) {
+                        int var1, var2;
+
+                        if (a.type == TOKEN_IDENTIFIER) {
+                            var2 = db->getIntByCell(a.value, row);
+                        } else {
+                            var2 = std::stoi(a.value);
+                        }
+
+                        if (b.type == TOKEN_IDENTIFIER) {
+                            var1 = db->getIntByCell(b.value, row);
+                        } else {
+                            var1 = std::stoi(b.value);
+                        }
+
+                        switch (tw.type) {
+                            case TOKEN_TIMES:
+                                stack.push(Token{
+                                    TOKEN_NUM,std::to_string(var1 * var2)
+                                });
+                            break;
+                            case TOKEN_SLASH:
+                                stack.push(Token{
+                                    TOKEN_NUM,std::to_string(var1 / var2)
+                                });
+                            break;
+                            case TOKEN_PLUS:
+                                stack.push(Token{
+                                    TOKEN_NUM,std::to_string(var1 + var2)
+                                });
+                            break;
+                            case TOKEN_MINUS:
+                                stack.push(Token{
+                                    TOKEN_NUM,std::to_string(var1 - var2)
+                                });
+                            break;
+                            case TOKEN_EQ:
+                                stack.push(Token{
+                                    TOKEN_NUM,std::to_string(var1 == var2)
+                                });
+                            break;
+                            case TOKEN_LSS:
+                                stack.push(Token{
+                                    TOKEN_NUM,std::to_string(var1 < var2)
+                                });
+                            break;
+                            case TOKEN_GTR:
+                                stack.push(Token{
+                                    TOKEN_NUM,std::to_string(var1 > var2)
+                                });
+                            break;
+                            case TOKEN_LEQ:
+                                stack.push(Token{
+                                    TOKEN_NUM,std::to_string(var1 <= var2)
+                                });
+                            break;
+                            case TOKEN_NEQ:
+                                stack.push(Token{
+                                    TOKEN_NUM,std::to_string(var1 != var2)
+                                });
+                            break;
+                            case TOKEN_GEQ:
+                                stack.push(Token{
+                                    TOKEN_NUM,std::to_string(var1 >= var2)
+                                });
+                            break;
+                        }
+                    } else if (a.type == TOKEN_STRING || b.type == TOKEN_STRING) {
+                        std::string var1, var2;
+
+                        if (a.type == TOKEN_IDENTIFIER) {
+                            var1 = db->getStringByCell(a.value, row);
+                        } else {
+                            var1 = a.value;
+                        }
+
+                        if (b.type == TOKEN_IDENTIFIER) {
+                            var2 = db->getStringByCell(b.value, row);
+                        } else {
+                            var2 = b.value;
+                        }
+
+                        if (tw.type == TOKEN_EQ) {
+                            stack.push(Token{
+                                TOKEN_NUM, (var1 == var2? "1" : "0")
+                            });
+                        }
+                    }
+                }
+            }
+            else return false;
+        }
+        if (stack.size() != 0) return false;
+    }
+    
+    return db->update(row, cell);
+}
