@@ -1,3 +1,4 @@
+#include <cstring>
 #include "table.hpp"
 
 auto table::open(std::string path) -> table {
@@ -25,9 +26,18 @@ auto table::create(std::string path, std::vector<TableHeader> column) -> table {
     file.write(reinterpret_cast<char*>(&columnCount), sizeof(uint8_t));
 
     uint16_t sizeData{0};
+
+    struct T {
+        char name[50];
+        Type type;
+        uint8_t size;
+    };
+
     for (auto& col : column) {
         sizeData += col.size;
-        file.write(reinterpret_cast<char*>(&col), sizeof(TableHeader));
+        T d = T{"", col.type, col.size};
+        strcpy(d.name, col.name);
+        file.write(reinterpret_cast<char*>(&d), sizeof(TableHeader));
     }
 
     file.write(reinterpret_cast<char*>(&sizeData), sizeof(uint16_t));
