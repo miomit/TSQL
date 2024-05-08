@@ -42,6 +42,12 @@ auto table::create(std::string path, std::vector<TableHeader> column) -> table {
 
     file.write(reinterpret_cast<char*>(&sizeData), sizeof(uint16_t));
 
+    sizeData = 0;
+    
+    file.write(reinterpret_cast<char*>(&sizeData), sizeof(uint16_t));
+    file.write(reinterpret_cast<char*>(&sizeData), sizeof(uint16_t));
+    file.write(reinterpret_cast<char*>(&sizeData), sizeof(uint16_t));
+
     file.close();
 
     return table(path, column);
