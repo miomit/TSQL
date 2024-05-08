@@ -130,6 +130,7 @@ auto SELECT(std::vector<Token> tokens) -> bool {
                     tokenWhere.push_back(tokens[j]);
                 }
             }
+            std::cout << std::endl;
             for (auto& colName : headerSelect)  std::cout << std::setw(20) << colName;
             std::cout << std::endl;
             for (auto j = 0; j < db->size(); j++) {

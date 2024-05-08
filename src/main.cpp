@@ -5,20 +5,31 @@
 auto main(int argc, char* argv[]) -> int {
 
     if (argc > 1) {
-        return !sqlExe(std::string(argv[1]));
-    } else {
-        std::cout << "[CREATE - 0, INSERT - 1, DROP - 2, SELECT - 3, DELETE - 4, UPDATE - 5]\n" << "> ";
+        std::ifstream file(argv[1]);
 
-        int c; std::cin >> c;
-    
-        switch (c) {
-            case 0: return !sqlExe(sqlCreate);
-            case 1: return !sqlExe(sqlInsert);
-            case 2: return !sqlExe(sqlDrop);
-            case 3: return !sqlExe(sqlSelect);
-            case 4: return !sqlExe(sqlDelete);
-            case 5: return !sqlExe(sqlUpdate);
+        if (!file.is_open()) {
+            std::cerr << "Не удалось открыть файл." << std::endl;
+            return 1;
         }
+
+        char c;
+        std::string buff = "";
+
+        while (file.get(c)) {
+            if (c != ';') {
+                buff += c;
+            } else {
+                try {
+                    sqlExe(buff);
+                } catch (...) {
+                    std::cout << "Error in " << buff << std::endl;
+                    return 1;
+                }
+                buff = "";
+            }
+        }
+
+        file.close();
     }
 
     return 1;
